@@ -172,12 +172,15 @@ function get_hash_for_app([String] $app, $config, [String] $version, [String] $u
     $hash = $null
 
     $hashmode = $config.mode
-    $basename = url_remote_filename($url)
+    $basename = [System.Web.HttpUtility]::UrlDecode((url_remote_filename($url)))
 
     $substitutions = $substitutions.Clone()
     $substitutions.Add('$url', (strip_fragment $url))
     $substitutions.Add('$baseurl', (strip_filename (strip_fragment $url)).TrimEnd('/'))
     $substitutions.Add('$basename', $basename)
+    $substitutions.Add('$urlNoExt', (strip_ext (strip_fragment $url)))
+    $substitutions.Add('$basenameNoExt', (strip_ext $basename))
+
     debug $substitutions
 
     $hashfile_url = substitute $config.url $substitutions
